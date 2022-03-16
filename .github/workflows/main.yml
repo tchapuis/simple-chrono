@@ -1,0 +1,46 @@
+name: Test and build and deploy
+on:
+    push: [ 'main' ]
+    pull_request: [ 'main' ]
+jobs:
+    eslint:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Use Node.js 16
+                uses: actions/setup-node@v2
+                with:
+                    node-version: "16"
+                    cache: 'npm'
+            -   run: npm ci
+            -   run: npm run lint
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Use Node.js 16
+                uses: actions/setup-node@v2
+                with:
+                    node-version: "16"
+                    cache: 'npm'
+            -   run: npm ci
+            -   run: npm run tests:e2e:ci
+    deploy:
+        needs:
+            - tests
+            - eslint
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Use Node.js 16
+                uses: actions/setup-node@v2
+                with:
+                    node-version: "16"
+                    cache: 'npm'
+            -   run: npm ci
+            -   run: npm run build
+            -   name: Deploy
+                uses: JamesIves/github-pages-deploy-action@v4.2.5
+                with:
+                    branch: gh-pages # The branch the action should deploy to.
+                    folder: dist # The folder the action should deploy.
