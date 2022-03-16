@@ -1,7 +1,9 @@
 name: Test and build and deploy
 on:
-    push: [ 'main' ]
-    pull_request: [ 'main' ]
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
 jobs:
     eslint:
         runs-on: ubuntu-latest
